@@ -1,6 +1,7 @@
 package Server;
 
 import java.io.File;
+import java.util.Scanner;
 
 public class AudioController {
 
@@ -32,5 +33,33 @@ public class AudioController {
             }
         }
 
-        audioPlayer.playNext();
-    }}
+        audioPlayer.start();
+
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("Выберите действие:\n1 - Следующий трек\n2 - Предыдущий трек\n3 - Старт\n4 - Стоп\n5 - Выход");
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    audioPlayer.playNext();
+                    break;
+                case 2:
+                    audioPlayer.playPrevious();
+                    break;
+                case 3:
+                    audioPlayer.start();
+                    break;
+                case 4:
+                    audioPlayer.stop();
+                    break;
+                case 5:
+                    System.out.println("Выход из программы.");
+                    System.exit(0);
+                default:
+                    System.out.println("Неверный выбор. Повторите попытку.");
+            }
+        }
+    }
+}

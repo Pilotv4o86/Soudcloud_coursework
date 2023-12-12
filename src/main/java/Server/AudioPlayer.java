@@ -1,55 +1,95 @@
 package Server;
 
-import javazoom.jl.decoder.Bitstream;
-import javazoom.jl.decoder.JavaLayerException;
-import javazoom.jl.player.advanced.AdvancedPlayer;
-import javazoom.jl.player.advanced.PlaybackEvent;
-import javazoom.jl.player.advanced.PlaybackListener;
-
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class AudioPlayer {
 
-    private AdvancedPlayer player;
+    private AudioPlayerThread playerThread;
     private Queue<File> playlist = new LinkedList<>();
+    private File currentFile;
+    private ExecutorService executorService;
+
+    public AudioPlayer() {
+        executorService = Executors.newSingleThreadExecutor();
+    }
 
     public void addToPlaylist(File file) {
         playlist.add(file);
     }
 
-    public void playNext() {
+    public void play() {
         if (!playlist.isEmpty()) {
-            File nextFile = playlist.poll();
-            play(nextFile);
+            currentFile = playlist.poll();
+            playFile(currentFile);
         } else {
             System.out.println("Очередь воспроизведения пуста.");
         }
     }
 
-    private void play(File file) {
-        try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            Bitstream bitstream = new Bitstream(fileInputStream);
-            int duration = bitstream.readFrame().calculate_framesize();
+    public void playNext() {
+        if (!playlist.isEmpty()) {
+            stopPlayback();
+            currentFile = playlist.poll();
+            playFile(currentFile);
+        } else {
+            System.out.println("Очередь воспроизведения пуста.");
+        }
+    }
 
-            this.player = new AdvancedPlayer(fileInputStream);
+    public void playPrevious() {
+        if (currentFile != null) {
+            playlist.add(currentFile);
+            stopPlayback();
+            if (!playlist.isEmpty()) {
+                currentFile = playlist.poll();
+                playFile(currentFile);
+            } else {
+                System.out.println("Очередь воспроизведения пуста.");
+            }
+        }
+    }
 
-            this.player.setPlayBackListener(new PlaybackListener() {
-                @Override
-                public void playbackFinished(PlaybackEvent evt) {
-                    System.out.println("Воспроизведение завершено: " + file.getName());
-                    playNext();
-                }
-            });
+    public void start() {
+        if (playerThread == null)
+        {
+            currentFile = playlist.poll();
+            if (currentFile != null) {
+                playerThread = new AudioPlayerThread(currentFile);
+                executorService.submit(playerThread);
+            } else {
+                System.out.println("Очередь воспроизведения пуста.");
+            }
+        } else {
+            System.out.println("Воспроизведение уже запущено.");
+        }
+    }
 
-            System.out.println("Воспроизведение: " + file.getName());
-            player.play();
+    public void stop() {
+        stopPlayback();
+        System.out.println("Воспроизведение остановлено.");
+    }
 
-        } catch (JavaLayerException | IOException e) {
-            e.printStackTrace();
+    public boolean isPlaying() {
+        return playerThread != null && playerThread.isPlaying();
+    }
+
+    private void playFile(File file) {
+        if (file != null) {
+            playerThread = new AudioPlayerThread(file);
+            executorService.submit(playerThread);
+        } else {
+            System.out.println("Не удалось воспроизвести трек.");
+        }
+    }
+
+    private void stopPlayback() {
+        if (playerThread != null) {
+            playerThread.stopPlayback();
+            playerThread = null;
         }
     }
 }
