@@ -29,11 +29,7 @@ public class AudioPlayerGUI {
         startStopButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    handleStartStopButton();
-                } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
-                }
+                handleStartStopButton();
             }
         });
 
@@ -72,7 +68,7 @@ public class AudioPlayerGUI {
         frame.setVisible(true);
     }
 
-    private void handleStartStopButton() throws InterruptedException {
+    private void handleStartStopButton() {
         if (audioPlayer.isPlaying()) {
             audioPlayer.stop();
             startStopButton.setText("Start");
