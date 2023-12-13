@@ -14,6 +14,8 @@ public class AudioPlayerThread extends Thread {
 
     private File file;
     private boolean playing;
+    private boolean stopRequested; // новый флаг
+    private int currentPosition;
     private AdvancedPlayer player;
 
     public AudioPlayerThread(File file) {
@@ -38,26 +40,35 @@ public class AudioPlayerThread extends Thread {
 
             System.out.println("Воспроизведение: " + file.getName());
             playing = true;
-            player.play();
+            stopRequested = false;
 
-        } catch (JavaLayerException | IOException e) {
-            e.printStackTrace();
-            playing = false;
-        } finally {
-            if (player != null) {
-                player.close();
+            while (!stopRequested && playing) {
+                player.play(0, Integer.MAX_VALUE); // начинаем воспроизведение с начала трека
+                // Добавим паузу между повторными воспроизведениями, чтобы не блокировать поток
+                Thread.sleep(100);
             }
+
+        } catch (JavaLayerException | IOException | InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+                player.close();
         }
     }
 
     public void stopPlayback() {
-        if (playing) {
-            player.close();
-            playing = false;
-        }
+        stopRequested = true;
+        playing = false;
     }
 
     public boolean isPlaying() {
         return playing;
+    }
+
+    public void setCurrentPosition(int position) {
+        this.currentPosition = position;
+    }
+
+    public int getCurrentPosition() {
+        return currentPosition;
     }
 }
