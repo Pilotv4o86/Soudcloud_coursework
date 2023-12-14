@@ -92,4 +92,13 @@ public class AudioPlayer {
             playerThread = null;
         }
     }
+
+    public void seek(int value) {
+        if (playerThread != null) {
+            playerThread.seek(value);
+        }
+    }
+
+    public void playLast() {
+    }
 }

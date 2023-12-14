@@ -60,4 +60,7 @@ public class AudioPlayerThread extends Thread {
     public boolean isPlaying() {
         return playing;
     }
+
+    public void seek(int value) {
+    }
 }

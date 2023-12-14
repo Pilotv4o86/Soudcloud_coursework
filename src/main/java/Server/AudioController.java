@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class AudioController {
 
     public static void main(String[] args) {
-        String directoryPath = "F:\\Labs\\Repos\\SoundCloud_coursework\\src\\main\\resources\\audio";
+        String directoryPath = "..\\resources\\audio";
         playMusicFromDirectory(directoryPath);
     }
 
