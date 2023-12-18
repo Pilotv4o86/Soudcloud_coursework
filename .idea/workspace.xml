@@ -6,7 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="78b969dd-ac0d-4048-9384-e5d560457ed6" name="Changes" comment="Реализован примитивное воспроизведение треков">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Server/AudioController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Server/AudioController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GUI/AudioPlayerGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GUI/AudioPlayerGUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Server/AudioController.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Server/AudioPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Server/AudioPlayer.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -84,6 +85,19 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="SoundCloud_coursework" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="SoundCloud_coursework" />
+      <option name="filePath" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>

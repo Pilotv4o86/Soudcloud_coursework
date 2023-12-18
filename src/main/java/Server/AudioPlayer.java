@@ -1,7 +1,9 @@
 package Server;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -9,9 +11,11 @@ import java.util.concurrent.Executors;
 public class AudioPlayer {
 
     private AudioPlayerThread playerThread;
-    private Queue<File> playlist = new LinkedList<>();
+    private List<File> playlist = new ArrayList<>();
     private File currentFile;
     private ExecutorService executorService;
+    private int currentIndex = -1;
+
 
     public AudioPlayer() {
         executorService = Executors.newSingleThreadExecutor();
@@ -21,43 +25,16 @@ public class AudioPlayer {
         playlist.add(file);
     }
 
+
+    // play
+    // Обновленный метод play
     public void play() {
-        if (!playlist.isEmpty()) {
-            currentFile = playlist.poll();
-            playFile(currentFile);
-        } else {
-            System.out.println("Очередь воспроизведения пуста.");
-        }
-    }
-
-    public void playNext() {
-        if (!playlist.isEmpty()) {
-            stopPlayback();
-            currentFile = playlist.poll();
-            playFile(currentFile);
-        } else {
-            System.out.println("Очередь воспроизведения пуста.");
-        }
-    }
-
-    public void playPrevious() {
-        if (currentFile != null) {
-            playlist.add(currentFile);
-            stopPlayback();
+        if (playerThread == null) {
             if (!playlist.isEmpty()) {
-                currentFile = playlist.poll();
-                playFile(currentFile);
-            } else {
-                System.out.println("Очередь воспроизведения пуста.");
-            }
-        }
-    }
-
-    public void start() {
-        if (playerThread == null)
-        {
-            currentFile = playlist.poll();
-            if (currentFile != null) {
+                if (currentIndex == -1) {
+                    currentIndex = 0;
+                    currentFile = playlist.get(currentIndex);
+                }
                 playerThread = new AudioPlayerThread(currentFile);
                 executorService.submit(playerThread);
             } else {
@@ -67,6 +44,33 @@ public class AudioPlayer {
             System.out.println("Воспроизведение уже запущено.");
         }
     }
+
+
+    // playNext
+    public void playNext() {
+        if (!playlist.isEmpty()) {
+            stopPlayback();
+            currentIndex = (currentIndex + 1) % playlist.size();
+            currentFile = playlist.get(currentIndex);
+            playFile(currentFile);
+        } else {
+            System.out.println("Очередь воспроизведения пуста.");
+        }
+    }
+
+    // playPrevious
+    public void playPrevious() {
+        if (!playlist.isEmpty()) {
+            stopPlayback();
+            currentIndex = (currentIndex - 1 + playlist.size()) % playlist.size();
+            currentFile = playlist.get(currentIndex);
+            playFile(currentFile);
+        } else {
+            System.out.println("Очередь воспроизведения пуста.");
+        }
+    }
+
+
 
     public void stop() {
         stopPlayback();
@@ -91,5 +95,10 @@ public class AudioPlayer {
             playerThread.stopPlayback();
             playerThread = null;
         }
+    }
+
+    public List<File> getPlaylist()
+    {
+        return playlist;
     }
 }

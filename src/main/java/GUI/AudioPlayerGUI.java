@@ -3,9 +3,12 @@ package GUI;
 import Server.AudioPlayer;
 
 import javax.swing.*;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AudioPlayerGUI {
 
@@ -13,11 +16,16 @@ public class AudioPlayerGUI {
     private JButton startStopButton;
     private JButton nextButton;
     private JButton prevButton;
+    private JButton addTrackButton;
+    private JSlider progressBar;
+    private JLabel timeLabel;
 
     public AudioPlayerGUI() {
         audioPlayer = new AudioPlayer();
         createAndShowGUI();
     }
+
+
 
     private void createAndShowGUI() {
         JFrame frame = new JFrame("Audio Player");
@@ -26,54 +34,58 @@ public class AudioPlayerGUI {
         JPanel panel = new JPanel();
 
         startStopButton = new JButton("Start");
-        startStopButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handleStartStopButton();
-            }
-        });
+        startStopButton.addActionListener(e -> handleStartStopButton());
 
         nextButton = new JButton("Next");
-        nextButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                audioPlayer.playNext();
-            }
-        });
+        nextButton.addActionListener(e -> audioPlayer.playNext());
 
         prevButton = new JButton("Previous");
-        prevButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                audioPlayer.playPrevious();
+        prevButton.addActionListener(e -> audioPlayer.playPrevious());
+
+        addTrackButton = new JButton("Add Track");
+        addTrackButton.addActionListener(e -> handleAddTrackButton());
+
+        progressBar = new JSlider();
+        progressBar.setMinimum(0);
+        progressBar.setMaximum(100);
+        progressBar.setValue(0);
+        progressBar.addChangeListener(e -> {
+            if (!progressBar.getValueIsAdjusting()) {
+                int value = progressBar.getValue();
+               // audioPlayer.seek(value);
             }
         });
+
+        timeLabel = new JLabel("0:00");
+
+
+        // Обновите часть создания кнопок в createAndShowGUI
+        JButton searchButton = new JButton("Поиск");
+        searchButton.addActionListener(e -> handleSearch());
+        panel.add(searchButton);
+
 
         panel.add(startStopButton);
-        panel.add(nextButton);
         panel.add(prevButton);
-
-        JButton addTrackButton = new JButton("Add Track");
-        addTrackButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handleAddTrackButton();
-            }
-        });
+        panel.add(nextButton);
         panel.add(addTrackButton);
+        panel.add(progressBar);
+        panel.add(timeLabel);
+
 
         frame.getContentPane().add(panel);
-        frame.setSize(400, 150);
+        frame.setSize(400, 200);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
-
-    private void handleStartStopButton() {
+    private void handleStartStopButton()
+    {
         if (audioPlayer.isPlaying()) {
             audioPlayer.stop();
             startStopButton.setText("Start");
-        } else {
-            audioPlayer.start();
+        }
+        else {
+            audioPlayer.play();
             startStopButton.setText("Stop");
         }
     }
@@ -89,12 +101,40 @@ public class AudioPlayerGUI {
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new AudioPlayerGUI();
+    private void handleSearch() {
+        // Диалоговое окно для ввода названия трека
+        String searchTerm = JOptionPane.showInputDialog(null, "Введите название трека для поиска:");
+
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            List<File> matchingTracks = searchTracksByName(searchTerm);
+
+            if (matchingTracks.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Совпадений не найдено.");
+            } else {
+                // Отобразите или выполните другие операции с найденными треками
+                for (File track : matchingTracks) {
+                    System.out.println("Найден совпадающий трек: " + track.getName());
+                }
             }
-        });
+        } else {
+            JOptionPane.showMessageDialog(null, "Неверный поисковый запрос.");
+        }
+    }
+
+    private List<File> searchTracksByName(String searchTerm) {
+        List<File> matchingTracks = new ArrayList<>();
+
+        // Проход по плейлисту и добавление соответствующих треков
+        for (File track : audioPlayer.getPlaylist()) {
+            if (track.getName().toLowerCase().contains(searchTerm.toLowerCase())) {
+                matchingTracks.add(track);
+            }
+        }
+
+        return matchingTracks;
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new AudioPlayerGUI());
     }
 }
