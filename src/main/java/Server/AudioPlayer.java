@@ -1,10 +1,9 @@
 package Server;
 
+import javax.swing.*;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -15,15 +14,23 @@ public class AudioPlayer {
     private File currentFile;
     private ExecutorService executorService;
     private int currentIndex = -1;
+    private int i = 0;
+    private DefaultListModel<File> playlistModel; // Новое поле для модели плейлиста
 
 
-    public AudioPlayer() {
+    public AudioPlayer(DefaultListModel<File> playlistModel) {
+        this.playlistModel = playlistModel;
         executorService = Executors.newSingleThreadExecutor();
     }
 
     public void addToPlaylist(File file) {
         playlist.add(file);
+        if (playerThread == null) {
+            currentFile = playlist.get(i++);
+        }
+        playlistModel.addElement(file); // Добавление трека в модель списка
     }
+
 
 
     // play
@@ -96,6 +103,8 @@ public class AudioPlayer {
             playerThread = null;
         }
     }
+
+
 
     public List<File> getPlaylist()
     {

@@ -4,8 +4,7 @@ import Server.AudioPlayer;
 
 import javax.swing.*;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +18,13 @@ public class AudioPlayerGUI {
     private JButton addTrackButton;
     private JSlider progressBar;
     private JLabel timeLabel;
+    private JList<File> playlistList; // Добавлен JList для отображения плейлиста
+    private DefaultListModel<File> playlistModel; // Модель для JList
+
 
     public AudioPlayerGUI() {
-        audioPlayer = new AudioPlayer();
+        DefaultListModel<File> playlistModel = new DefaultListModel<>();
+        audioPlayer = new AudioPlayer(playlistModel);
         createAndShowGUI();
     }
 
@@ -58,6 +61,12 @@ public class AudioPlayerGUI {
 
         timeLabel = new JLabel("0:00");
 
+        playlistModel = new DefaultListModel<>();
+        playlistList = new JList<>(playlistModel);
+        JScrollPane playlistScrollPane = new JScrollPane(playlistList);
+        playlistScrollPane.setPreferredSize(new Dimension(200, 150));
+
+        panel.add(playlistScrollPane);
 
         // Обновите часть создания кнопок в createAndShowGUI
         JButton searchButton = new JButton("Поиск");
@@ -97,6 +106,7 @@ public class AudioPlayerGUI {
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
             audioPlayer.addToPlaylist(selectedFile);
+            playlistModel.addElement(selectedFile); // Добавление трека в модель списка
             JOptionPane.showMessageDialog(null, "Track added to the playlist: " + selectedFile.getName());
         }
     }
