@@ -184,7 +184,7 @@ class BackgroundPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        File imageURL = new File(".\\src\\resources\\back1.gif");
+        File imageURL = new File(".\\src\\resources\\back5.jpg");
 
         if (imageURL != null) {
             ImageIcon imageIcon = null;
