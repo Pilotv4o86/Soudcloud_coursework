@@ -1,0 +1,245 @@
+Index: src/main/java/Server/AudioPlayer.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package Server;\r\n\r\nimport javax.swing.*;\r\nimport java.io.File;\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\nimport java.util.concurrent.ExecutorService;\r\nimport java.util.concurrent.Executors;\r\n\r\npublic class AudioPlayer {\r\n\r\n    private AudioPlayerThread playerThread;\r\n    private List<File> playlist = new ArrayList<>();\r\n    private File currentFile;\r\n    private ExecutorService executorService;\r\n    private int currentIndex = -1;\r\n    private int i = 0;\r\n    private DefaultListModel<File> playlistModel; // Новое поле для модели плейлиста\r\n\r\n\r\n    public AudioPlayer(DefaultListModel<File> playlistModel) {\r\n        this.playlistModel = playlistModel;\r\n        executorService = Executors.newSingleThreadExecutor();\r\n    }\r\n\r\n    public void addToPlaylist(File file) {\r\n        playlist.add(file);\r\n        if (playerThread == null) {\r\n            currentFile = playlist.get(i++);\r\n        }\r\n        playlistModel.addElement(file); // Добавление трека в модель списка\r\n    }\r\n\r\n\r\n\r\n    // play\r\n    // Обновленный метод play\r\n    public void play() {\r\n        if (playerThread == null) {\r\n            if (!playlist.isEmpty()) {\r\n                if (currentIndex == -1) {\r\n                    currentIndex = 0;\r\n                    currentFile = playlist.get(currentIndex);\r\n                }\r\n                playerThread = new AudioPlayerThread(currentFile);\r\n                executorService.submit(playerThread);\r\n            } else {\r\n                System.out.println(\"Очередь воспроизведения пуста.\");\r\n            }\r\n        } else {\r\n            System.out.println(\"Воспроизведение уже запущено.\");\r\n        }\r\n    }\r\n\r\n\r\n    // playNext\r\n    public void playNext() {\r\n        if (!playlist.isEmpty()) {\r\n            stopPlayback();\r\n            currentIndex = (currentIndex + 1) % playlist.size();\r\n            currentFile = playlist.get(currentIndex);\r\n            playFile(currentFile);\r\n        } else {\r\n            System.out.println(\"Очередь воспроизведения пуста.\");\r\n        }\r\n    }\r\n\r\n    // playPrevious\r\n    public void playPrevious() {\r\n        if (!playlist.isEmpty()) {\r\n            stopPlayback();\r\n            currentIndex = (currentIndex - 1 + playlist.size()) % playlist.size();\r\n            currentFile = playlist.get(currentIndex);\r\n            playFile(currentFile);\r\n        } else {\r\n            System.out.println(\"Очередь воспроизведения пуста.\");\r\n        }\r\n    }\r\n\r\n\r\n\r\n    public void stop() {\r\n        stopPlayback();\r\n        System.out.println(\"Воспроизведение остановлено.\");\r\n    }\r\n\r\n    public boolean isPlaying() {\r\n        return playerThread != null && playerThread.isPlaying();\r\n    }\r\n\r\n    private void playFile(File file) {\r\n        if (file != null) {\r\n            playerThread = new AudioPlayerThread(file);\r\n            executorService.submit(playerThread);\r\n        } else {\r\n            System.out.println(\"Не удалось воспроизвести трек.\");\r\n        }\r\n    }\r\n\r\n    private void stopPlayback() {\r\n        if (playerThread != null) {\r\n            playerThread.stopPlayback();\r\n            playerThread = null;\r\n        }\r\n    }\r\n\r\n\r\n\r\n    public List<File> getPlaylist()\r\n    {\r\n        return playlist;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/Server/AudioPlayer.java b/src/main/java/Server/AudioPlayer.java
+--- a/src/main/java/Server/AudioPlayer.java	(revision 5929c69650495922acd2be06c756d05b1cf7910f)
++++ b/src/main/java/Server/AudioPlayer.java	(date 1703444596000)
+@@ -110,4 +110,10 @@
+     {
+         return playlist;
+     }
++
++    public int getTrackProgress(File track) {
++        return 0;
++    }
++
++
+ }
+Index: pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\r\n         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\r\n    <modelVersion>4.0.0</modelVersion>\r\n\r\n    <groupId>org.example</groupId>\r\n    <artifactId>SoundCloud_coursework</artifactId>\r\n    <version>1.0-SNAPSHOT</version>\r\n\r\n    <properties>\r\n        <maven.compiler.source>19</maven.compiler.source>\r\n        <maven.compiler.target>19</maven.compiler.target>\r\n    </properties>\r\n\r\n    <parent>\r\n        <groupId>org.springframework.boot</groupId>\r\n        <artifactId>spring-boot-starter-parent</artifactId>\r\n        <version>2.5.5</version>\r\n        <relativePath/> <!-- lookup parent from repository -->\r\n    </parent>\r\n\r\n\r\n    <dependencies>\r\n        <dependency>\r\n            <groupId>org.springframework.boot</groupId>\r\n            <artifactId>spring-boot-starter-web</artifactId>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>javazoom</groupId>\r\n            <artifactId>jlayer</artifactId>\r\n            <version>1.0.1</version>\r\n        </dependency>\r\n        <!-- Другие зависимости, если необходимо -->\r\n    </dependencies>\r\n\r\n\r\n\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pom.xml b/pom.xml
+--- a/pom.xml	(revision 5929c69650495922acd2be06c756d05b1cf7910f)
++++ b/pom.xml	(date 1703421676000)
+@@ -31,9 +31,5 @@
+             <artifactId>jlayer</artifactId>
+             <version>1.0.1</version>
+         </dependency>
+-        <!-- Другие зависимости, если необходимо -->
+     </dependencies>
+-
+-
+-
+ </project>
+\ No newline at end of file
+Index: src/main/java/Server/AudioPlayerThread.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package Server;\r\n\r\nimport javazoom.jl.decoder.*;\r\nimport javazoom.jl.player.AudioDevice;\r\nimport javazoom.jl.player.FactoryRegistry;\r\nimport javazoom.jl.player.advanced.AdvancedPlayer;\r\nimport javazoom.jl.player.advanced.PlaybackEvent;\r\nimport javazoom.jl.player.advanced.PlaybackListener;\r\n\r\nimport java.io.*;\r\n\r\npublic class AudioPlayerThread extends Thread {\r\n\r\n    private File file;\r\n    private boolean playing;\r\n    private AdvancedPlayer player;\r\n\r\n    public AudioPlayerThread(File file) {\r\n        this.file = file;\r\n    }\r\n\r\n    @Override\r\n    public void run() {\r\n        try (FileInputStream fileInputStream = new FileInputStream(file)) {\r\n            Bitstream bitstream = new Bitstream(fileInputStream);\r\n            long duration = bitstream.readFrame().calculate_framesize();\r\n\r\n            player = new AdvancedPlayer(fileInputStream);\r\n\r\n            player.setPlayBackListener(new PlaybackListener() {\r\n                @Override\r\n                public void playbackFinished(PlaybackEvent evt) {\r\n                    System.out.println(\"Воспроизведение завершено: \" + file.getName());\r\n                    playing = false;\r\n                }\r\n            });\r\n\r\n            System.out.println(\"Воспроизведение: \" + file.getName());\r\n            playing = true;\r\n            player.play();\r\n\r\n        } catch (JavaLayerException | IOException e) {\r\n            e.printStackTrace();\r\n            playing = false;\r\n        } finally {\r\n            if (player != null) {\r\n                player.close();\r\n            }\r\n        }\r\n    }\r\n\r\n    public void stopPlayback() {\r\n        if (playing) {\r\n            player.close();\r\n            playing = false;\r\n        }\r\n    }\r\n\r\n\r\n    public boolean isPlaying() {\r\n        return playing;\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/Server/AudioPlayerThread.java b/src/main/java/Server/AudioPlayerThread.java
+--- a/src/main/java/Server/AudioPlayerThread.java	(revision 5929c69650495922acd2be06c756d05b1cf7910f)
++++ b/src/main/java/Server/AudioPlayerThread.java	(date 1703444596000)
+@@ -61,4 +61,5 @@
+         return playing;
+     }
+ 
++
+ }
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ExternalStorageConfigurationManager\" enabled=\"true\" />\r\n  <component name=\"MavenProjectsManager\">\r\n    <option name=\"originalFiles\">\r\n      <list>\r\n        <option value=\"$PROJECT_DIR$/pom.xml\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_X\" default=\"true\" project-jdk-name=\"19\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/out\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 5929c69650495922acd2be06c756d05b1cf7910f)
++++ b/.idea/misc.xml	(date 1703173676000)
+@@ -8,7 +8,7 @@
+       </list>
+     </option>
+   </component>
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_X" default="true" project-jdk-name="19" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_20" default="true" project-jdk-name="20" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/out" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"78b969dd-ac0d-4048-9384-e5d560457ed6\" name=\"Changes\" comment=\"Реализовано перемещение по плейлисту и функция play/pause(частично)\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/encodings.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/encodings.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_07_12_2023_17_41_[Changes]/shelved.patch\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_07_12_2023_17_41__Changes_.xml\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/GUI/AudioPlayerGUI.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/GUI/AudioPlayerGUI.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/Server/AudioPlayer.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/Server/AudioPlayer.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/Server/AudioPlayerThread.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/Server/AudioPlayerThread.java\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Class\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\r\n      <map>\r\n        <entry key=\"$PROJECT_DIR$\" value=\"main\" />\r\n      </map>\r\n    </option>\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"MarkdownSettingsMigration\">\r\n    <option name=\"stateVersion\" value=\"1\" />\r\n  </component>\r\n  <component name=\"ProjectId\" id=\"2ZCg63m5TFpRX29JD51FR5fn3HR\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\">\r\n    <ConfirmationsSetting value=\"1\" id=\"Add\" />\r\n  </component>\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\"><![CDATA[{\r\n  \"keyToString\": {\r\n    \"RequestMappingsPanelOrder0\": \"0\",\r\n    \"RequestMappingsPanelOrder1\": \"1\",\r\n    \"RequestMappingsPanelWidth0\": \"75\",\r\n    \"RequestMappingsPanelWidth1\": \"75\",\r\n    \"RunOnceActivity.OpenProjectViewOnStart\": \"true\",\r\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\r\n    \"WebServerToolWindowFactoryState\": \"false\",\r\n    \"last_opened_file_path\": \"F:/Labs/Repos/SoundCloud_coursework/src/main/java\",\r\n    \"project.structure.last.edited\": \"Modules\",\r\n    \"project.structure.proportion\": \"0.0\",\r\n    \"project.structure.side.proportion\": \"0.0\",\r\n    \"spring.configuration.checksum\": \"567a85cd9f4699c6154830a519cdc8cf\"\r\n  }\r\n}]]></component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CopyFile.RECENT_KEYS\">\r\n      <recent name=\"F:\\Labs\\Repos\\SoundCloud_coursework\\src\\main\\java\" />\r\n      <recent name=\"F:\\Labs\\Repos\\SoundCloud_coursework\\src\\main\\resources\\audio\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\" selected=\"Application.AudioPlayerGUI\">\r\n    <configuration name=\"AudioController\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"Server.AudioController\" />\r\n      <module name=\"SoundCloud_coursework\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"Server.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"AudioPlayerGUI\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"GUI.AudioPlayerGUI\" />\r\n      <module name=\"SoundCloud_coursework\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"GUI.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"Main\" type=\"SpringBootApplicationConfigurationType\" factoryName=\"Spring Boot\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"SoundCloud_coursework\" />\r\n      <option name=\"SPRING_BOOT_MAIN_CLASS\" value=\"Server.Main\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"Server.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Application.AudioPlayerGUI\" />\r\n        <item itemvalue=\"Application.AudioController\" />\r\n        <item itemvalue=\"Spring Boot.Main\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"78b969dd-ac0d-4048-9384-e5d560457ed6\" name=\"Changes\" comment=\"\" />\r\n      <created>1701931298707</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1701931298707</updated>\r\n      <workItem from=\"1701931300131\" duration=\"941000\" />\r\n      <workItem from=\"1701960945770\" duration=\"437000\" />\r\n      <workItem from=\"1701969276890\" duration=\"29000\" />\r\n      <workItem from=\"1702326828946\" duration=\"598000\" />\r\n      <workItem from=\"1702389581911\" duration=\"5099000\" />\r\n      <workItem from=\"1702402572544\" duration=\"4420000\" />\r\n      <workItem from=\"1702963085286\" duration=\"3335000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"Initial commit\">\r\n      <created>1701931371767</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1701931371767</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"Реализован примитивное воспроизведение треков\">\r\n      <created>1702392118768</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1702392118768</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"Реализовано перемещение по плейлисту и функция play/pause(частично)\">\r\n      <created>1702925959102</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1702925959102</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"4\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"Initial commit\" />\r\n    <MESSAGE value=\"Реализован примитивное воспроизведение треков\" />\r\n    <MESSAGE value=\"Реализовано перемещение по плейлисту и функция play/pause(частично)\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Реализовано перемещение по плейлисту и функция play/pause(частично)\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 5929c69650495922acd2be06c756d05b1cf7910f)
++++ b/.idea/workspace.xml	(date 1703444912000)
+@@ -4,11 +4,10 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="78b969dd-ac0d-4048-9384-e5d560457ed6" name="Changes" comment="Реализовано перемещение по плейлисту и функция play/pause(частично)">
+-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_07_12_2023_17_41_[Changes]/shelved.patch" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_07_12_2023_17_41__Changes_.xml" beforeDir="false" />
++    <list default="true" id="78b969dd-ac0d-4048-9384-e5d560457ed6" name="Changes" comment="попытка реализации простой музыкальной визуализации. Саша реализуй методы возвращения длины трека и текущей позиции">
++      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/main/java/GUI/AudioPlayerGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GUI/AudioPlayerGUI.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/main/java/Server/AudioPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Server/AudioPlayer.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/main/java/Server/AudioPlayerThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Server/AudioPlayerThread.java" afterDir="false" />
+@@ -32,10 +31,28 @@
+       </map>
+     </option>
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
++  </component>
++  <component name="GitHubPullRequestSearchHistory">{
++  &quot;lastFilter&quot;: {
++    &quot;state&quot;: &quot;OPEN&quot;,
++    &quot;assignee&quot;: &quot;Podlina&quot;
++  }
++}</component>
++  <component name="GithubPullRequestsUISettings">
++    <option name="selectedUrlAndAccountId">
++      <UrlAndAccount>
++        <option name="accountId" value="64a1a4f3-78fe-4ab2-8741-6582f606f8c1" />
++        <option name="url" value="https://github.com/Pilotv4o86/Soudcloud_coursework.git" />
++      </UrlAndAccount>
++    </option>
+   </component>
+   <component name="MarkdownSettingsMigration">
+     <option name="stateVersion" value="1" />
+   </component>
++  <component name="ProjectColorInfo">{
++  &quot;customColor&quot;: &quot;&quot;,
++  &quot;associatedIndex&quot;: 4
++}</component>
+   <component name="ProjectId" id="2ZCg63m5TFpRX29JD51FR5fn3HR" />
+   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+     <ConfirmationsSetting value="1" id="Add" />
+@@ -44,26 +61,37 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent"><![CDATA[{
+-  "keyToString": {
+-    "RequestMappingsPanelOrder0": "0",
+-    "RequestMappingsPanelOrder1": "1",
+-    "RequestMappingsPanelWidth0": "75",
+-    "RequestMappingsPanelWidth1": "75",
+-    "RunOnceActivity.OpenProjectViewOnStart": "true",
+-    "RunOnceActivity.ShowReadmeOnStart": "true",
+-    "WebServerToolWindowFactoryState": "false",
+-    "last_opened_file_path": "F:/Labs/Repos/SoundCloud_coursework/src/main/java",
+-    "project.structure.last.edited": "Modules",
+-    "project.structure.proportion": "0.0",
+-    "project.structure.side.proportion": "0.0",
+-    "spring.configuration.checksum": "567a85cd9f4699c6154830a519cdc8cf"
++  <component name="PropertiesComponent">{
++  &quot;keyToString&quot;: {
++    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
++    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
++    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
++    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
++    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
++    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
++    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
++    &quot;last_opened_file_path&quot;: &quot;E:/UNIVERSITY/курсовая 2/Soudcloud_coursework/src/resources&quot;,
++    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
++    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
++    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
++    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.notifications&quot;,
++    &quot;spring.configuration.checksum&quot;: &quot;567a85cd9f4699c6154830a519cdc8cf&quot;
+   }
+-}]]></component>
++}</component>
+   <component name="RecentsManager">
+     <key name="CopyFile.RECENT_KEYS">
++      <recent name="E:\UNIVERSITY\курсовая 2\Soudcloud_coursework\src\resources" />
++      <recent name="E:\UNIVERSITY\курсовая 2\Soudcloud_coursework\src\main\imeg" />
++      <recent name="E:\UNIVERSITY\курсовая 2\Soudcloud_coursework\src\main\resources" />
+       <recent name="F:\Labs\Repos\SoundCloud_coursework\src\main\java" />
+       <recent name="F:\Labs\Repos\SoundCloud_coursework\src\main\resources\audio" />
++    </key>
++    <key name="MoveFile.RECENT_KEYS">
++      <recent name="E:\UNIVERSITY\курсовая 2\Soudcloud_coursework\src\resources" />
++      <recent name="E:\UNIVERSITY\курсовая 2\Soudcloud_coursework\src\main\java\GUI" />
++      <recent name="E:\UNIVERSITY\курсовая 2\Soudcloud_coursework\src\main\resources" />
++      <recent name="E:\UNIVERSITY\курсовая 2\Soudcloud_coursework\src" />
+     </key>
+   </component>
+   <component name="RunManager" selected="Application.AudioPlayerGUI">
+@@ -110,7 +138,6 @@
+       <list>
+         <item itemvalue="Application.AudioPlayerGUI" />
+         <item itemvalue="Application.AudioController" />
+-        <item itemvalue="Spring Boot.Main" />
+       </list>
+     </recent_temporary>
+   </component>
+@@ -151,7 +178,23 @@
+       <option name="project" value="LOCAL" />
+       <updated>1702925959102</updated>
+     </task>
+-    <option name="localTasksCounter" value="4" />
++    <task id="LOCAL-00004" summary="Изменены надписи на кнопках, фоновое изображение, размер окна приложения">
++      <option name="closed" value="true" />
++      <created>1703436920329</created>
++      <option name="number" value="00004" />
++      <option name="presentableId" value="LOCAL-00004" />
++      <option name="project" value="LOCAL" />
++      <updated>1703436920329</updated>
++    </task>
++    <task id="LOCAL-00005" summary="попытка реализации простой музыкальной визуализации. Саша реализуй методы возвращения длины трека и текущей позиции">
++      <option name="closed" value="true" />
++      <created>1703444702277</created>
++      <option name="number" value="00005" />
++      <option name="presentableId" value="LOCAL-00005" />
++      <option name="project" value="LOCAL" />
++      <updated>1703444702277</updated>
++    </task>
++    <option name="localTasksCounter" value="6" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -172,6 +215,24 @@
+     <MESSAGE value="Initial commit" />
+     <MESSAGE value="Реализован примитивное воспроизведение треков" />
+     <MESSAGE value="Реализовано перемещение по плейлисту и функция play/pause(частично)" />
+-    <option name="LAST_COMMIT_MESSAGE" value="Реализовано перемещение по плейлисту и функция play/pause(частично)" />
++    <MESSAGE value="Изменены надписи на кнопках, фоновое изображение, размер окна приложения" />
++    <MESSAGE value="попытка реализации простой музыкальной визуализации. Саша реализуй методы возвращения длины трека и текущей позиции" />
++    <option name="LAST_COMMIT_MESSAGE" value="попытка реализации простой музыкальной визуализации. Саша реализуй методы возвращения длины трека и текущей позиции" />
++  </component>
++  <component name="XDebuggerManager">
++    <breakpoint-manager>
++      <breakpoints>
++        <line-breakpoint enabled="true" type="java-line">
++          <url>file://$PROJECT_DIR$/src/main/java/GUI/AudioPlayerGUI.java</url>
++          <line>116</line>
++          <option name="timeStamp" value="1" />
++        </line-breakpoint>
++        <line-breakpoint enabled="true" type="java-line">
++          <url>file://$PROJECT_DIR$/src/main/java/GUI/AudioPlayerGUI.java</url>
++          <line>132</line>
++          <option name="timeStamp" value="2" />
++        </line-breakpoint>
++      </breakpoints>
++    </breakpoint-manager>
+   </component>
+ </project>
+\ No newline at end of file

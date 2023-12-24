@@ -50,8 +50,8 @@ public class AudioPlayerGUI {
         playlistModel = new DefaultListModel<>();
         playlistList = new JList<>(playlistModel);
         JScrollPane playlistScrollPane = new JScrollPane(playlistList);
-        playlistScrollPane.setBounds(50,70,400,100);
-        frame.add(playlistScrollPane);
+        playlistScrollPane.setBounds(100,200,400,100);
+
 
         JButton searchButton = new JButton("\uD83D\uDD0E"); // Кнопка поиска
         searchButton.addActionListener(e -> handleSearch());
@@ -61,6 +61,7 @@ public class AudioPlayerGUI {
         panel.add(startStopButton);
         panel.add(nextButton);
         panel.add(addTrackButton);
+        panel.add(playlistScrollPane);
 
         frame.getContentPane().add(panel);
         frame.setSize(500, 400);
@@ -129,6 +130,9 @@ public class AudioPlayerGUI {
 // Кастомный класс BackgroundPanel
 class BackgroundPanel extends JPanel {
     private static final long serialVersionUID = 1L;
+
+
+
 
     @Override
     protected void paintComponent(Graphics g) {
