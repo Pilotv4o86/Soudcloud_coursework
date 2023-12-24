@@ -2,16 +2,9 @@ package GUI;
 
 import Server.AudioPlayer;
 
-import javazoom.jl.decoder.JavaLayerException;
-import javazoom.jl.player.advanced.AdvancedPlayer;
-import javazoom.jl.player.advanced.PlaybackEvent;
-import javazoom.jl.player.advanced.PlaybackListener;
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,63 +18,49 @@ public class AudioPlayerGUI {
     private JButton addTrackButton;
     private JList<File> playlistList;
     private DefaultListModel<File> playlistModel;
-    private AdvancedPlayer player;
-    private Timer timer;
-    private JProgressBar progressBar;
-    private JLabel currentTrackLabel;
-    private JButton playPauseButton; // Добавим поле playPauseButton
 
     public AudioPlayerGUI() {
         DefaultListModel<File> playlistModel = new DefaultListModel<>();
         audioPlayer = new AudioPlayer(playlistModel);
         createAndShowGUI();
+
     }
 
     private void createAndShowGUI() {
         JFrame frame = new JFrame("Audio Player");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        // Используем кастомный класс BackgroundPanel
         BackgroundPanel panel = new BackgroundPanel();
         panel.setLayout(new FlowLayout());
 
-        startStopButton = new JButton("<html>&#9658;</html>");
+        startStopButton = new JButton("<html>&#9658;</html>"); // Кнопка start/stop
         startStopButton.setFont(new Font("Arial", Font.PLAIN, 16));
         startStopButton.addActionListener(e -> handleStartStopButton());
 
-        nextButton = new JButton("<html>&#9197;</html>");
+        nextButton = new JButton("<html>&#9197;</html>"); // Кнопка next
         nextButton.addActionListener(e -> audioPlayer.playNext());
 
-        prevButton = new JButton("<html>&#9198;</html>");
+        prevButton = new JButton("<html>&#9198;</html>"); // Кнопка prev
         prevButton.addActionListener(e -> audioPlayer.playPrevious());
 
-        addTrackButton = new JButton("<html>&#10010;&#9836;</html>");
+        addTrackButton = new JButton("<html>&#10010;&#9836;</html>"); // Кнопка add track
         addTrackButton.addActionListener(e -> handleAddTrackButton());
 
         playlistModel = new DefaultListModel<>();
         playlistList = new JList<>(playlistModel);
         JScrollPane playlistScrollPane = new JScrollPane(playlistList);
-        playlistScrollPane.setBounds(50, 70, 400, 100);
+        playlistScrollPane.setBounds(50,70,400,100);
         frame.add(playlistScrollPane);
 
-        JButton searchButton = new JButton("\uD83D\uDD0E");
+        JButton searchButton = new JButton("\uD83D\uDD0E"); // Кнопка поиска
         searchButton.addActionListener(e -> handleSearch());
         panel.add(searchButton);
 
         panel.add(prevButton);
-
-        // Добавим playPauseButton в GUI
-        playPauseButton = new JButton("<html>&#9658;</html>");
-        playPauseButton.addActionListener(e -> handlePlayPauseButton());
-        panel.add(playPauseButton);
-
+        panel.add(startStopButton);
         panel.add(nextButton);
         panel.add(addTrackButton);
-
-        progressBar = new JProgressBar(0, 100);
-        panel.add(progressBar);
-
-        currentTrackLabel = new JLabel("Currently Playing: ");
-        panel.add(currentTrackLabel);
 
         frame.getContentPane().add(panel);
         frame.setSize(500, 400);
@@ -90,101 +69,71 @@ public class AudioPlayerGUI {
     }
 
     private void handleStartStopButton() {
+        if (audioPlayer.isPlaying()) {
+            audioPlayer.stop();
+            startStopButton.setText("<html>&#9658;</html>"); // Кнопка start
+        } else {
+            audioPlayer.play();
+            startStopButton.setText("<html>&#9209;</html>"); // Кнопка stop
+        }
     }
 
     private void handleAddTrackButton() {
+        JFileChooser fileChooser = new JFileChooser();
+        int result = fileChooser.showOpenDialog(null);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            audioPlayer.addToPlaylist(selectedFile);
+            playlistModel.addElement(selectedFile);
+            JOptionPane.showMessageDialog(null, "Track added to the playlist: " + selectedFile.getName());
+        }
     }
 
     private void handleSearch() {
-    }
+        String searchTerm = JOptionPane.showInputDialog(null, "Введите название трека для поиска:");
 
-    private void handlePlayPauseButton() {
-        togglePlayPause();
-    }
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            List<File> matchingTracks = searchTracksByName(searchTerm);
 
-    private void togglePlayPause() {
-        if (audioPlayer.isPlaying()) {
-            audioPlayer.stop();
-            stop();
+            if (matchingTracks.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Совпадений не найдено.");
+            } else {
+                for (File track : matchingTracks) {
+                    System.out.println("Найден совпадающий трек: " + track.getName());
+                }
+            }
         } else {
-            audioPlayer.play();
-            playPauseButton.setText("<html>&#9209;</html>");
-            play();
+            JOptionPane.showMessageDialog(null, "Неверный поисковый запрос.");
         }
     }
 
-    private void play() {
-        File selectedFile = playlistList.getSelectedValue();
-        if (selectedFile != null) {
-            try {
-                FileInputStream fileInputStream = new FileInputStream(selectedFile);
-                player = new AdvancedPlayer(fileInputStream);
-                player.setPlayBackListener(new PlaybackListener() {
-                    @Override
-                    public void playbackFinished(PlaybackEvent evt) {
-                        stop();
-                    }
-                });
+    private List<File> searchTracksByName(String searchTerm) {
+        List<File> matchingTracks = new ArrayList<>();
 
-                timer = new Timer(100, e -> updateProgressBar());
-                timer.start();
-
-                playPauseButton.setText("<html>&#9209;</html>");
-                currentTrackLabel.setText("Currently Playing: " + selectedFile.getName());
-
-                new Thread(() -> {
-                    try {
-                        player.play();
-                    } catch (JavaLayerException e) {
-                        e.printStackTrace();
-                    }
-                }).start();
-
-            } catch (JavaLayerException | IOException e) {
-                e.printStackTrace();
+        for (File track : audioPlayer.getPlaylist()) {
+            if (track.getName().toLowerCase().contains(searchTerm.toLowerCase())) {
+                matchingTracks.add(track);
             }
         }
+
+        return matchingTracks;
     }
 
-    private void stop() {
-        if (player != null) {
-            player.close();
-            player = null;
-            timer.stop();
-            progressBar.setValue(0);
-            playPauseButton.setText("<html>&#9658;</html>");
-            currentTrackLabel.setText("Currently Playing: No Track");
-        }
-    }
-
-    private void updateProgressBar() {
-        if (audioPlayer != null) {
-            int currentPosition = audioPlayer.getCurrentPosition();
-            int currentTrackDuration = audioPlayer.getCurrentTrackDuration();
-
-            if (currentTrackDuration > 0) {
-                int progress = (int) (((double) currentPosition / currentTrackDuration) * 100);
-                progressBar.setValue(progress);
-            }
-        }
-    }
-
-
-    // Остальные методы остаются без изменений
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new AudioPlayerGUI());
     }
 }
 
-// Класс BackgroundPanel остается без изменений
+// Кастомный класс BackgroundPanel
 class BackgroundPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        File imageURL = new File(".\\src\\resources\\back5.jpg");
+        File imageURL = new File(".\\src\\resources\\back1.gif");
 
         if (imageURL != null) {
             ImageIcon imageIcon = null;

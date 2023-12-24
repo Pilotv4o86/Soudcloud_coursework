@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="78b969dd-ac0d-4048-9384-e5d560457ed6" name="Changes" comment="Реализовано перемещение по плейлисту и функция play/pause(частично)">
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_07_12_2023_17_41_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_07_12_2023_17_41__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GUI/AudioPlayerGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GUI/AudioPlayerGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Server/AudioPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Server/AudioPlayer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Server/AudioPlayerThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Server/AudioPlayerThread.java" afterDir="false" />
-    </list>
+    <list default="true" id="78b969dd-ac0d-4048-9384-e5d560457ed6" name="Changes" comment="Реализовано перемещение по плейлисту и функция play/pause(частично)" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -36,6 +28,9 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 5
+}]]></component>
   <component name="ProjectId" id="2ZCg63m5TFpRX29JD51FR5fn3HR" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
@@ -53,6 +48,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "Merging dev",
     "last_opened_file_path": "F:/Labs/Repos/SoundCloud_coursework/src/main/java",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.0",
@@ -110,7 +106,6 @@
       <list>
         <item itemvalue="Application.AudioPlayerGUI" />
         <item itemvalue="Application.AudioController" />
-        <item itemvalue="Spring Boot.Main" />
       </list>
     </recent_temporary>
   </component>
