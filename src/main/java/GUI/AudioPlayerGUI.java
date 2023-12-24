@@ -1,5 +1,6 @@
 package GUI;
 
+import DB.DataBaseManager;
 import Server.AudioPlayer;
 
 import javax.swing.*;
@@ -23,9 +24,12 @@ public class AudioPlayerGUI {
 
 
     public AudioPlayerGUI() {
-        DefaultListModel<File> playlistModel = new DefaultListModel<>();
+        playlistModel = new DefaultListModel<>();
         audioPlayer = new AudioPlayer(playlistModel);
         createAndShowGUI();
+
+        // Получаем треки из базы данных и добавляем их в playlistModel
+        new DataBaseManager().getListofTracks(playlistModel);
     }
 
 
@@ -55,7 +59,7 @@ public class AudioPlayerGUI {
         progressBar.addChangeListener(e -> {
             if (!progressBar.getValueIsAdjusting()) {
                 int value = progressBar.getValue();
-               // audioPlayer.seek(value);
+                // audioPlayer.seek(value);
             }
         });
 
@@ -87,13 +91,12 @@ public class AudioPlayerGUI {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
-    private void handleStartStopButton()
-    {
+
+    private void handleStartStopButton() {
         if (audioPlayer.isPlaying()) {
             audioPlayer.stop();
             startStopButton.setText("Start");
-        }
-        else {
+        } else {
             audioPlayer.play();
             startStopButton.setText("Stop");
         }
@@ -114,22 +117,26 @@ public class AudioPlayerGUI {
     private void handleSearch() {
         // Диалоговое окно для ввода названия трека
         String searchTerm = JOptionPane.showInputDialog(null, "Введите название трека для поиска:");
+        List<File> matchingTracks = searchTracksByName(searchTerm);
 
-        if (searchTerm != null && !searchTerm.isEmpty()) {
-            List<File> matchingTracks = searchTracksByName(searchTerm);
-
-            if (matchingTracks.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Совпадений не найдено.");
-            } else {
-                // Отобразите или выполните другие операции с найденными треками
-                for (File track : matchingTracks) {
-                    System.out.println("Найден совпадающий трек: " + track.getName());
+        if (searchTerm == null && searchTerm.isEmpty() && matchingTracks.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null, "Совпадений не найдено.");
+        }
+        else
+        {
+            for (File track : matchingTracks)
+            {
+                if (audioPlayer.getPlaylist().contains(track))
+                {
+                    audioPlayer.playFile(track);
+                    break;
                 }
             }
-        } else {
-            JOptionPane.showMessageDialog(null, "Неверный поисковый запрос.");
         }
     }
+
+
 
     private List<File> searchTracksByName(String searchTerm) {
         List<File> matchingTracks = new ArrayList<>();
@@ -145,6 +152,6 @@ public class AudioPlayerGUI {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new AudioPlayerGUI());
+        SwingUtilities.invokeLater(AudioPlayerGUI::new);
     }
 }

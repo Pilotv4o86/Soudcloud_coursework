@@ -88,7 +88,7 @@ public class AudioPlayer {
         return playerThread != null && playerThread.isPlaying();
     }
 
-    private void playFile(File file) {
+    public void playFile(File file) {
         if (file != null) {
             playerThread = new AudioPlayerThread(file);
             executorService.submit(playerThread);
