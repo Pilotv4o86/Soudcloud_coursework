@@ -32,6 +32,11 @@
             <version>1.0.1</version>
         </dependency>
         <!-- Другие зависимости, если необходимо -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version>
+        </dependency>
     </dependencies>
 
 

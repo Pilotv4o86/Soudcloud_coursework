@@ -1,13 +1,8 @@
-package DB;
+package java.DB;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class DataBaseManager {
@@ -19,11 +14,11 @@ public class DataBaseManager {
     {
         List<File> playlistModel = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
-            String sql = "SELECT * FROM Tracks";
+            String sql = "SELECT file_path FROM Tracks"; // Укажите конкретные столбцы, если нужно
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
-                        String trackFilePath = resultSet.getString("");
+                        String trackFilePath = resultSet.getString("file_path"); // Укажите название столбца
                         File trackFile = new File(trackFilePath);
                         playlistModel.add(trackFile);
                     }
