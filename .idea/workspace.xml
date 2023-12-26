@@ -5,10 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="78b969dd-ac0d-4048-9384-e5d560457ed6" name="Changes" comment="попробовала изменить формат фона на .gif пропала панель отображения трека. исменила надписи на кнопках">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_24_12_2023_22_14__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_24_12_2023_22_14__Changes_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/DB/DataBaseManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/DB/DataBaseManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/resources/back2.gif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/resources/back3.gif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/resources/back4.gif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/resources/backdef.gif" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GUI/AudioPlayerGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GUI/AudioPlayerGUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resources/back5.jpg" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,10 +43,11 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "git-widget-placeholder": "dev"
+  }
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\лабы\Soudcloud_coursework" />

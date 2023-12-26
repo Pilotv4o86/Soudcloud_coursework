@@ -1,0 +1,254 @@
+Index: src/main/java/GUI/AudioPlayerGUI.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package GUI;\r\n\r\nimport Server.AudioPlayer;\r\n\r\nimport javax.swing.*;\r\nimport java.awt.*;\r\nimport java.io.File;\r\nimport java.net.MalformedURLException;\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\npublic class AudioPlayerGUI {\r\n\r\n    private AudioPlayer audioPlayer;\r\n    private JButton startStopButton;\r\n    private JButton nextButton;\r\n    private JButton prevButton;\r\n    private JButton addTrackButton;\r\n    private JList<File> playlistList;\r\n    private DefaultListModel<File> playlistModel;\r\n\r\n    public AudioPlayerGUI() {\r\n        DefaultListModel<File> playlistModel = new DefaultListModel<>();\r\n        audioPlayer = new AudioPlayer(playlistModel);\r\n        createAndShowGUI();\r\n\r\n    }\r\n\r\n    private void createAndShowGUI() {\r\n        JFrame frame = new JFrame(\"Audio Player\");\r\n        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\r\n\r\n        // Используем кастомный класс BackgroundPanel\r\n        BackgroundPanel panel = new BackgroundPanel();\r\n        panel.setLayout(new FlowLayout());\r\n\r\n        startStopButton = new JButton(\"<html>&#9658;</html>\"); // Кнопка start/stop\r\n        startStopButton.setFont(new Font(\"Arial\", Font.PLAIN, 16));\r\n        startStopButton.addActionListener(e -> handleStartStopButton());\r\n\r\n        nextButton = new JButton(\"<html>&#9197;</html>\"); // Кнопка next\r\n        nextButton.addActionListener(e -> audioPlayer.playNext());\r\n\r\n        prevButton = new JButton(\"<html>&#9198;</html>\"); // Кнопка prev\r\n        prevButton.addActionListener(e -> audioPlayer.playPrevious());\r\n\r\n        addTrackButton = new JButton(\"<html>&#10010;&#9836;</html>\"); // Кнопка add track\r\n        addTrackButton.addActionListener(e -> handleAddTrackButton());\r\n\r\n        playlistModel = new DefaultListModel<>();\r\n        playlistList = new JList<>(playlistModel);\r\n        JScrollPane playlistScrollPane = new JScrollPane(playlistList);\r\n        playlistScrollPane.setBounds(100,200,400,100);\r\n\r\n\r\n        JButton searchButton = new JButton(\"\\uD83D\\uDD0E\"); // Кнопка поиска\r\n        searchButton.addActionListener(e -> handleSearch());\r\n        panel.add(searchButton);\r\n\r\n        panel.add(prevButton);\r\n        panel.add(startStopButton);\r\n        panel.add(nextButton);\r\n        panel.add(addTrackButton);\r\n        panel.add(playlistScrollPane);\r\n\r\n        frame.getContentPane().add(panel);\r\n        frame.setSize(500, 400);\r\n        frame.setLocationRelativeTo(null);\r\n        frame.setVisible(true);\r\n    }\r\n\r\n    private void handleStartStopButton() {\r\n        if (audioPlayer.isPlaying()) {\r\n            audioPlayer.stop();\r\n            startStopButton.setText(\"<html>&#9658;</html>\"); // Кнопка start\r\n        } else {\r\n            audioPlayer.play();\r\n            startStopButton.setText(\"<html>&#9209;</html>\"); // Кнопка stop\r\n        }\r\n    }\r\n\r\n    private void handleAddTrackButton() {\r\n        JFileChooser fileChooser = new JFileChooser();\r\n        int result = fileChooser.showOpenDialog(null);\r\n\r\n        if (result == JFileChooser.APPROVE_OPTION) {\r\n            File selectedFile = fileChooser.getSelectedFile();\r\n            audioPlayer.addToPlaylist(selectedFile);\r\n            playlistModel.addElement(selectedFile);\r\n            JOptionPane.showMessageDialog(null, \"Track added to the playlist: \" + selectedFile.getName());\r\n        }\r\n    }\r\n\r\n    private void handleSearch() {\r\n        String searchTerm = JOptionPane.showInputDialog(null, \"Введите название трека для поиска:\");\r\n\r\n        if (searchTerm != null && !searchTerm.isEmpty()) {\r\n            List<File> matchingTracks = searchTracksByName(searchTerm);\r\n\r\n            if (matchingTracks.isEmpty()) {\r\n                JOptionPane.showMessageDialog(null, \"Совпадений не найдено.\");\r\n            } else {\r\n                for (File track : matchingTracks) {\r\n                    System.out.println(\"Найден совпадающий трек: \" + track.getName());\r\n                }\r\n            }\r\n        } else {\r\n            JOptionPane.showMessageDialog(null, \"Неверный поисковый запрос.\");\r\n        }\r\n    }\r\n\r\n    private List<File> searchTracksByName(String searchTerm) {\r\n        List<File> matchingTracks = new ArrayList<>();\r\n\r\n        for (File track : audioPlayer.getPlaylist()) {\r\n            if (track.getName().toLowerCase().contains(searchTerm.toLowerCase())) {\r\n                matchingTracks.add(track);\r\n            }\r\n        }\r\n\r\n        return matchingTracks;\r\n    }\r\n\r\n\r\n    public static void main(String[] args) {\r\n        SwingUtilities.invokeLater(() -> new AudioPlayerGUI());\r\n    }\r\n}\r\n\r\n// Кастомный класс BackgroundPanel\r\nclass BackgroundPanel extends JPanel {\r\n    private static final long serialVersionUID = 1L;\r\n\r\n\r\n\r\n\r\n    @Override\r\n    protected void paintComponent(Graphics g) {\r\n        super.paintComponent(g);\r\n        File imageURL = new File(\".\\\\src\\\\resources\\\\back1.gif\");\r\n\r\n        if (imageURL != null) {\r\n            ImageIcon imageIcon = null;\r\n            try {\r\n                imageIcon = new ImageIcon(imageURL.toURL());\r\n            } catch (MalformedURLException e) {\r\n                throw new RuntimeException(e);\r\n            }\r\n            Image image = imageIcon.getImage();\r\n            g.drawImage(image, 0, 0, getWidth(), getHeight(), this);\r\n        } else {\r\n            System.err.println(\"Image not found!\");\r\n        }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/GUI/AudioPlayerGUI.java b/src/main/java/GUI/AudioPlayerGUI.java
+--- a/src/main/java/GUI/AudioPlayerGUI.java	(revision 6e1b8916bb87d96ad1c03fca326742b136169b39)
++++ b/src/main/java/GUI/AudioPlayerGUI.java	(date 1703580446000)
+@@ -6,8 +6,8 @@
+ import java.awt.*;
+ import java.io.File;
+ import java.net.MalformedURLException;
+-import java.util.ArrayList;
+-import java.util.List;
++import java.time.LocalDate;
++import java.time.Month;
+ 
+ public class AudioPlayerGUI {
+ 
+@@ -23,17 +23,18 @@
+         DefaultListModel<File> playlistModel = new DefaultListModel<>();
+         audioPlayer = new AudioPlayer(playlistModel);
+         createAndShowGUI();
+-
+     }
+ 
+     private void createAndShowGUI() {
+         JFrame frame = new JFrame("Audio Player");
+         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+ 
+-        // Используем кастомный класс BackgroundPanel
+-        BackgroundPanel panel = new BackgroundPanel();
++        // Используем кастомный класс DynamicBackgroundPanel
++        DynamicBackgroundPanel panel = new DynamicBackgroundPanel();
+         panel.setLayout(new FlowLayout());
+ 
++        frame.setVisible(true);
++
+         startStopButton = new JButton("<html>&#9658;</html>"); // Кнопка start/stop
+         startStopButton.setFont(new Font("Arial", Font.PLAIN, 16));
+         startStopButton.addActionListener(e -> handleStartStopButton());
+@@ -50,9 +51,8 @@
+         playlistModel = new DefaultListModel<>();
+         playlistList = new JList<>(playlistModel);
+         JScrollPane playlistScrollPane = new JScrollPane(playlistList);
+-        playlistScrollPane.setBounds(100,200,400,100);
++        playlistScrollPane.setBounds(100, 200, 400, 100);
+ 
+-
+         JButton searchButton = new JButton("\uD83D\uDD0E"); // Кнопка поиска
+         searchButton.addActionListener(e -> handleSearch());
+         panel.add(searchButton);
+@@ -66,7 +66,6 @@
+         frame.getContentPane().add(panel);
+         frame.setSize(500, 400);
+         frame.setLocationRelativeTo(null);
+-        frame.setVisible(true);
+     }
+ 
+     private void handleStartStopButton() {
+@@ -95,7 +94,7 @@
+         String searchTerm = JOptionPane.showInputDialog(null, "Введите название трека для поиска:");
+ 
+         if (searchTerm != null && !searchTerm.isEmpty()) {
+-            List<File> matchingTracks = searchTracksByName(searchTerm);
++            java.util.List<File> matchingTracks = searchTracksByName(searchTerm);
+ 
+             if (matchingTracks.isEmpty()) {
+                 JOptionPane.showMessageDialog(null, "Совпадений не найдено.");
+@@ -109,8 +108,8 @@
+         }
+     }
+ 
+-    private List<File> searchTracksByName(String searchTerm) {
+-        List<File> matchingTracks = new ArrayList<>();
++    private java.util.List<File> searchTracksByName(String searchTerm) {
++        java.util.List<File> matchingTracks = new java.util.ArrayList<>();
+ 
+         for (File track : audioPlayer.getPlaylist()) {
+             if (track.getName().toLowerCase().contains(searchTerm.toLowerCase())) {
+@@ -121,28 +120,23 @@
+         return matchingTracks;
+     }
+ 
+-
+     public static void main(String[] args) {
+         SwingUtilities.invokeLater(() -> new AudioPlayerGUI());
+     }
+ }
+ 
+-// Кастомный класс BackgroundPanel
+-class BackgroundPanel extends JPanel {
++class DynamicBackgroundPanel extends JPanel {
+     private static final long serialVersionUID = 1L;
+ 
+-
+-
+-
+     @Override
+     protected void paintComponent(Graphics g) {
+         super.paintComponent(g);
+-        File imageURL = new File(".\\src\\resources\\back1.gif");
+ 
+-        if (imageURL != null) {
+-            ImageIcon imageIcon = null;
++        File imagePath = new File(getImagePathForCurrentSeason());
++        if (imagePath != null) {
++            ImageIcon imageIcon;
+             try {
+-                imageIcon = new ImageIcon(imageURL.toURL());
++                imageIcon = new ImageIcon(imagePath.toURL());
+             } catch (MalformedURLException e) {
+                 throw new RuntimeException(e);
+             }
+@@ -152,4 +146,29 @@
+             System.err.println("Image not found!");
+         }
+     }
+-}
+\ No newline at end of file
++
++    private String getImagePathForCurrentSeason() {
++        Month currentMonth = LocalDate.now().getMonth();
++
++        switch (currentMonth) {
++            case DECEMBER:
++            case JANUARY:
++            case FEBRUARY:
++                return ".\\src\\resources\\back1.gif";
++            case MARCH:
++            case APRIL:
++            case MAY:
++                return ".\\src\\resources\\back2.gif";
++            case JUNE:
++            case JULY:
++            case AUGUST:
++                return ".\\src\\resources\\back3.gif";
++            case SEPTEMBER:
++            case OCTOBER:
++            case NOVEMBER:
++                return ".\\src\\resources\\back4.gif";
++            default:
++                return ".\\src\\resources\\backdef.gif";
++        }
++    }
++}
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"78b969dd-ac0d-4048-9384-e5d560457ed6\" name=\"Changes\" comment=\"попробовала изменить формат фона на .gif пропала панель отображения трека. исменила надписи на кнопках\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/GUI/AudioPlayerGUI.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/GUI/AudioPlayerGUI.java\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Class\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\r\n      <map>\r\n        <entry key=\"$PROJECT_DIR$\" value=\"main\" />\r\n      </map>\r\n    </option>\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"MarkdownSettingsMigration\">\r\n    <option name=\"stateVersion\" value=\"1\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\"><![CDATA[{\r\n  \"associatedIndex\": 5\r\n}]]></component>\r\n  <component name=\"ProjectId\" id=\"2ZCg63m5TFpRX29JD51FR5fn3HR\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\">\r\n    <ConfirmationsSetting value=\"1\" id=\"Add\" />\r\n  </component>\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\"><![CDATA[{\r\n  \"keyToString\": {\r\n    \"RequestMappingsPanelOrder0\": \"0\",\r\n    \"RequestMappingsPanelOrder1\": \"1\",\r\n    \"RequestMappingsPanelWidth0\": \"75\",\r\n    \"RequestMappingsPanelWidth1\": \"75\",\r\n    \"RunOnceActivity.OpenProjectViewOnStart\": \"true\",\r\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\r\n    \"WebServerToolWindowFactoryState\": \"false\",\r\n    \"git-widget-placeholder\": \"dev\",\r\n    \"last_opened_file_path\": \"F:/Labs/Repos/SoundCloud_coursework/src/main/java\",\r\n    \"project.structure.last.edited\": \"Modules\",\r\n    \"project.structure.proportion\": \"0.0\",\r\n    \"project.structure.side.proportion\": \"0.0\",\r\n    \"spring.configuration.checksum\": \"567a85cd9f4699c6154830a519cdc8cf\"\r\n  }\r\n}]]></component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CopyFile.RECENT_KEYS\">\r\n      <recent name=\"F:\\Labs\\Repos\\SoundCloud_coursework\\src\\main\\java\" />\r\n      <recent name=\"F:\\Labs\\Repos\\SoundCloud_coursework\\src\\main\\resources\\audio\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\" selected=\"Application.AudioPlayerGUI\">\r\n    <configuration name=\"AudioController\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"Server.AudioController\" />\r\n      <module name=\"SoundCloud_coursework\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"Server.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"AudioPlayerGUI\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"GUI.AudioPlayerGUI\" />\r\n      <module name=\"SoundCloud_coursework\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"GUI.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"Main\" type=\"SpringBootApplicationConfigurationType\" factoryName=\"Spring Boot\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"SoundCloud_coursework\" />\r\n      <option name=\"SPRING_BOOT_MAIN_CLASS\" value=\"Server.Main\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"Server.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Application.AudioPlayerGUI\" />\r\n        <item itemvalue=\"Application.AudioController\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"78b969dd-ac0d-4048-9384-e5d560457ed6\" name=\"Changes\" comment=\"\" />\r\n      <created>1701931298707</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1701931298707</updated>\r\n      <workItem from=\"1701931300131\" duration=\"941000\" />\r\n      <workItem from=\"1701960945770\" duration=\"437000\" />\r\n      <workItem from=\"1701969276890\" duration=\"29000\" />\r\n      <workItem from=\"1702326828946\" duration=\"598000\" />\r\n      <workItem from=\"1702389581911\" duration=\"5099000\" />\r\n      <workItem from=\"1702402572544\" duration=\"4420000\" />\r\n      <workItem from=\"1702963085286\" duration=\"3335000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"Initial commit\">\r\n      <created>1701931371767</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1701931371767</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"Реализован примитивное воспроизведение треков\">\r\n      <created>1702392118768</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1702392118768</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"Реализовано перемещение по плейлисту и функция play/pause(частично)\">\r\n      <created>1702925959102</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1702925959102</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00004\" summary=\"попробовала изменить формат фона на .gif пропала панель отображения трека. исменила надписи на кнопках\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1703446072615</created>\r\n      <option name=\"number\" value=\"00004\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1703446072615</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"5\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"Initial commit\" />\r\n    <MESSAGE value=\"Реализован примитивное воспроизведение треков\" />\r\n    <MESSAGE value=\"Реализовано перемещение по плейлисту и функция play/pause(частично)\" />\r\n    <MESSAGE value=\"попробовала изменить формат фона на .gif пропала панель отображения трека. исменила надписи на кнопках\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"попробовала изменить формат фона на .gif пропала панель отображения трека. исменила надписи на кнопках\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 6e1b8916bb87d96ad1c03fca326742b136169b39)
++++ b/.idea/workspace.xml	(date 1703580216000)
+@@ -4,9 +4,14 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="78b969dd-ac0d-4048-9384-e5d560457ed6" name="Changes" comment="попробовала изменить формат фона на .gif пропала панель отображения трека. исменила надписи на кнопках">
++    <list default="true" id="78b969dd-ac0d-4048-9384-e5d560457ed6" name="Changes" comment="Добавлен динамический фон, надписи замененыны на соответствующие значки, список перемещён вниз">
++      <change afterPath="$PROJECT_DIR$/src/resources/back2.gif" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/resources/back3.gif" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/resources/back4.gif" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/resources/backdef.gif" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/main/java/GUI/AudioPlayerGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GUI/AudioPlayerGUI.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/resources/back5.jpg" beforeDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -31,9 +36,9 @@
+   <component name="MarkdownSettingsMigration">
+     <option name="stateVersion" value="1" />
+   </component>
+-  <component name="ProjectColorInfo"><![CDATA[{
+-  "associatedIndex": 5
+-}]]></component>
++  <component name="ProjectColorInfo">{
++  &quot;associatedIndex&quot;: 5
++}</component>
+   <component name="ProjectId" id="2ZCg63m5TFpRX29JD51FR5fn3HR" />
+   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+     <ConfirmationsSetting value="1" id="Add" />
+@@ -42,23 +47,23 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent"><![CDATA[{
+-  "keyToString": {
+-    "RequestMappingsPanelOrder0": "0",
+-    "RequestMappingsPanelOrder1": "1",
+-    "RequestMappingsPanelWidth0": "75",
+-    "RequestMappingsPanelWidth1": "75",
+-    "RunOnceActivity.OpenProjectViewOnStart": "true",
+-    "RunOnceActivity.ShowReadmeOnStart": "true",
+-    "WebServerToolWindowFactoryState": "false",
+-    "git-widget-placeholder": "dev",
+-    "last_opened_file_path": "F:/Labs/Repos/SoundCloud_coursework/src/main/java",
+-    "project.structure.last.edited": "Modules",
+-    "project.structure.proportion": "0.0",
+-    "project.structure.side.proportion": "0.0",
+-    "spring.configuration.checksum": "567a85cd9f4699c6154830a519cdc8cf"
++  <component name="PropertiesComponent">{
++  &quot;keyToString&quot;: {
++    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
++    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
++    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
++    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
++    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
++    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
++    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
++    &quot;last_opened_file_path&quot;: &quot;F:/Labs/Repos/SoundCloud_coursework/src/main/java&quot;,
++    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
++    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
++    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
++    &quot;spring.configuration.checksum&quot;: &quot;567a85cd9f4699c6154830a519cdc8cf&quot;
+   }
+-}]]></component>
++}</component>
+   <component name="RecentsManager">
+     <key name="CopyFile.RECENT_KEYS">
+       <recent name="F:\Labs\Repos\SoundCloud_coursework\src\main\java" />
+@@ -157,7 +162,15 @@
+       <option name="project" value="LOCAL" />
+       <updated>1703446072615</updated>
+     </task>
+-    <option name="localTasksCounter" value="5" />
++    <task id="LOCAL-00005" summary="Добавлен динамический фон, надписи замененыны на соответствующие значки, список перемещён вниз">
++      <option name="closed" value="true" />
++      <created>1703447489324</created>
++      <option name="number" value="00005" />
++      <option name="presentableId" value="LOCAL-00005" />
++      <option name="project" value="LOCAL" />
++      <updated>1703447489324</updated>
++    </task>
++    <option name="localTasksCounter" value="6" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -179,6 +192,7 @@
+     <MESSAGE value="Реализован примитивное воспроизведение треков" />
+     <MESSAGE value="Реализовано перемещение по плейлисту и функция play/pause(частично)" />
+     <MESSAGE value="попробовала изменить формат фона на .gif пропала панель отображения трека. исменила надписи на кнопках" />
+-    <option name="LAST_COMMIT_MESSAGE" value="попробовала изменить формат фона на .gif пропала панель отображения трека. исменила надписи на кнопках" />
++    <MESSAGE value="Добавлен динамический фон, надписи замененыны на соответствующие значки, список перемещён вниз" />
++    <option name="LAST_COMMIT_MESSAGE" value="Добавлен динамический фон, надписи замененыны на соответствующие значки, список перемещён вниз" />
+   </component>
+ </project>
+\ No newline at end of file
