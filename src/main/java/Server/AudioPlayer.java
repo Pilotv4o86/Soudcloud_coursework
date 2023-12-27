@@ -45,10 +45,10 @@ public class AudioPlayer {
                 playerThread = new AudioPlayerThread(currentFile);
                 executorService.submit(playerThread);
             } else {
-                System.out.println("Очередь воспроизведения пуста.");
+                System.out.println("Queue is empty.");
             }
         } else {
-            System.out.println("Воспроизведение уже запущено.");
+            System.out.println("Playback started.");
         }
     }
 

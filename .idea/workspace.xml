@@ -5,12 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="78b969dd-ac0d-4048-9384-e5d560457ed6" name="Changes" comment="попробовала изменить формат фона на .gif пропала панель отображения трека. исменила надписи на кнопках">
-      <change afterPath="$PROJECT_DIR$/src/resources/back2.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/resources/back3.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/resources/back4.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/resources/backdef.gif" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_24_12_2023_22_14__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_24_12_2023_22_14__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_26_12_2023_11_49__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_26_12_2023_11_49__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/DB/DataBaseManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/DB/DataBaseManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GUI/AudioPlayerGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GUI/AudioPlayerGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resources/back5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Server/AudioPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Server/AudioPlayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/java/DB/DataBaseManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/java/GUI/AudioPlayerGUI.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/java/Server/AudioPlayer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/java/Server/AudioPlayerThread.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,15 +47,12 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "git-widget-placeholder": "dev"
-  }
-}]]></component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\лабы\Soudcloud_coursework" />
-      <recent name="D:\лабы\Soudcloud_coursework\src\main\java" />
       <recent name="F:\Labs\Repos\SoundCloud_coursework\src\main\java" />
       <recent name="F:\Labs\Repos\SoundCloud_coursework\src\main\resources\audio" />
     </key>
@@ -72,24 +73,13 @@
     </configuration>
     <configuration name="AudioPlayerGUI" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="GUI.AudioPlayerGUI" />
-      <module name="SoundCloud_coursework" />
+      <module name="Soudcloud_coursework" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="GUI.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="JetRunConfigurationType">
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <option name="filePath" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -129,7 +119,8 @@
       <workItem from="1702389581911" duration="5099000" />
       <workItem from="1702402572544" duration="4420000" />
       <workItem from="1702963085286" duration="3335000" />
-      <workItem from="1703575625575" duration="304000" />
+      <workItem from="1703585750991" duration="4823000" />
+      <workItem from="1703653729552" duration="425000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <created>1701931371767</created>
@@ -183,5 +174,15 @@
     <MESSAGE value="Реализовано перемещение по плейлисту и функция play/pause(частично)" />
     <MESSAGE value="попробовала изменить формат фона на .gif пропала панель отображения трека. исменила надписи на кнопках" />
     <option name="LAST_COMMIT_MESSAGE" value="попробовала изменить формат фона на .gif пропала панель отображения трека. исменила надписи на кнопках" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.sql.SQLException" package="java.sql" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

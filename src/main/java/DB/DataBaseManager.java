@@ -19,11 +19,11 @@ public class DataBaseManager {
     {
         List<File> playlistModel = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
-            String sql = "SELECT * FROM Tracks";
+            String sql = "SELECT file_path FROM Tracks";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
-                        String trackFilePath = resultSet.getString("");
+                        String trackFilePath = resultSet.getString("file_path");
                         File trackFile = new File(trackFilePath);
                         playlistModel.add(trackFile);
                     }
